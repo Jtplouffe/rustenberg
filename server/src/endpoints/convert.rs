@@ -18,7 +18,7 @@ async fn convert_url(
     Extension(chromium_service): Extension<Arc<ChromiumService>>,
 ) -> impl IntoResponse {
     let pdf_bytes = chromium_service
-        .generate_pdf_from_url("https://recursyve.io".into())
+        .generate_pdf_from_url("https://youtube.com".into())
         .await
         .unwrap();
 

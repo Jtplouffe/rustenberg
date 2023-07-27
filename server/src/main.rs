@@ -2,6 +2,7 @@ use axum::Server;
 
 mod endpoints;
 mod services;
+mod utils;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
