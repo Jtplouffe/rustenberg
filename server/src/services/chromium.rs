@@ -17,6 +17,7 @@ impl ChromiumService {
     pub async fn new() -> anyhow::Result<Self> {
         let (browser, mut handler) = Browser::launch(
             BrowserConfig::builder()
+                .no_sandbox()
                 .chrome_executable(
                     "/var/lib/flatpak/exports/bin/com.github.Eloston.UngoogledChromium",
                 )
@@ -66,16 +67,20 @@ impl ChromiumService {
         };
 
         let page_clone = page.clone();
+
+        // TODO: Implement some kind of timeout mechanism, where if a timeout occurs,
+        // the task's futures will stopped being polled.
         let page_wait_handle = tokio::task::spawn(wait_until_page_fully_loaded(page_clone));
 
         if let Err(err) = page.goto(url).await {
             self.browser
                 .dispose_browser_context(browser_context_id)
                 .await?;
+            // TODO: stop wait_handle
             return Err(anyhow!(err));
         }
 
-        page_wait_handle.await.and_then(|result| result);
+        page_wait_handle.await??;
 
         let pdf_bytes = page.pdf(Default::default()).await?;
 
