@@ -35,7 +35,7 @@ async fn convert_url(
     }
 
     let pdf_bytes = chromium_service
-        .generate_pdf_from_url(&dto.url)
+        .generate_pdf_from_url(&dto.url, Default::default())
         .await
         .unwrap();
 

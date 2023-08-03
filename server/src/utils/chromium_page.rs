@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use chromiumoxide::{
     cdp::browser_protocol::{
         network::EventLoadingFinished,
@@ -5,16 +7,30 @@ use chromiumoxide::{
     },
     Page,
 };
-use futures::{future::try_join4, StreamExt};
+use futures::{try_join, FutureExt, StreamExt};
+
+pub(crate) async fn wait_until_page_fully_loaded_with_bounds(
+    page: Page,
+    min_wait_duration: Duration,
+    max_wait_duration: Duration,
+) -> anyhow::Result<()> {
+    try_join!(
+        // TODO: Find a way to merge the error from `timeout` and from the inner function
+        tokio::time::timeout(max_wait_duration, wait_until_page_fully_loaded(page)),
+        tokio::time::sleep(min_wait_duration).map(|_| Ok(())),
+    )?
+    .0?;
+
+    Ok(())
+}
 
 pub(crate) async fn wait_until_page_fully_loaded(page: Page) -> anyhow::Result<()> {
-    try_join4(
+    try_join!(
         wait_for_network_idle_event(&page),
         wait_for_dom_content_event(&page),
         wait_for_load_event(&page),
         wait_for_loading_finished_event(&page),
-    )
-    .await?;
+    )?;
 
     Ok(())
 }
