@@ -13,6 +13,9 @@ use tokio::task::JoinHandle;
 
 use crate::utils::chromium_page::wait_until_page_fully_loaded_with_bounds;
 
+const DEFAULT_MIN_PAGE_LOAD_WAIT_MS: u64 = 0;
+const DEFAULT_MAX_PAGE_LOAD_WAIT_MS: u64 = 5000;
+
 #[derive(Default)]
 pub struct GeneratePdfOptions {
     pub landscape: Option<bool>,
@@ -25,27 +28,30 @@ pub struct GeneratePdfOptions {
     pub margin_bottom: Option<f64>,
     pub margin_left: Option<f64>,
     pub margin_right: Option<f64>,
+
+    pub min_page_load_wait_ms: Option<u64>,
+    pub max_page_load_wait_ms: Option<u64>,
 }
 
-impl Into<PrintToPdfParams> for GeneratePdfOptions {
-    fn into(self) -> PrintToPdfParams {
-        return PrintToPdfParams {
-            landscape: self.landscape,
-            display_header_footer: self.display_header_footer,
-            print_background: self.print_background,
-            scale: self.scale,
-            paper_width: self.paper_width,
-            paper_height: self.paper_height,
-            margin_top: self.margin_top,
-            margin_bottom: self.margin_bottom,
-            margin_left: self.margin_left,
-            margin_right: self.margin_right,
+impl From<GeneratePdfOptions> for PrintToPdfParams {
+    fn from(value: GeneratePdfOptions) -> Self {
+        Self {
+            landscape: value.landscape,
+            display_header_footer: value.display_header_footer,
+            print_background: value.print_background,
+            scale: value.scale,
+            paper_width: value.paper_width,
+            paper_height: value.paper_height,
+            margin_top: value.margin_top,
+            margin_bottom: value.margin_bottom,
+            margin_left: value.margin_left,
+            margin_right: value.margin_right,
             page_ranges: None,
             header_template: None,
             footer_template: None,
             prefer_css_page_size: None,
             transfer_mode: None,
-        };
+        }
     }
 }
 
@@ -107,11 +113,18 @@ impl ChromiumService {
             }
         };
 
-        // TODO: Take bounds from options
-        let page_wait_handle = tokio::task::spawn(wait_until_page_fully_loaded_with_bounds(
+        let page_wait_handle = tokio::spawn(wait_until_page_fully_loaded_with_bounds(
             page.clone(),
-            Duration::from_secs(2),
-            Duration::from_secs(10),
+            Duration::from_millis(
+                options
+                    .min_page_load_wait_ms
+                    .unwrap_or(DEFAULT_MIN_PAGE_LOAD_WAIT_MS),
+            ),
+            Duration::from_millis(
+                options
+                    .max_page_load_wait_ms
+                    .unwrap_or(DEFAULT_MAX_PAGE_LOAD_WAIT_MS),
+            ),
         ));
 
         if let Err(err) = page.goto(url).await {
