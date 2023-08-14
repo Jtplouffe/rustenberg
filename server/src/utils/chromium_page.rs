@@ -14,12 +14,10 @@ pub(crate) async fn wait_until_page_fully_loaded_with_bounds(
     min_wait_duration: Duration,
     max_wait_duration: Duration,
 ) -> anyhow::Result<()> {
-    try_join!(
-        // TODO: Find a way to merge the error from `timeout` and from the inner function
+    let _ = try_join!(
         tokio::time::timeout(max_wait_duration, wait_until_page_fully_loaded(page)),
         tokio::time::sleep(min_wait_duration).map(|_| Ok(())),
-    )?
-    .0?;
+    );
 
     Ok(())
 }

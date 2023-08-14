@@ -33,8 +33,8 @@ pub struct GeneratePdfOptions {
     pub max_page_load_wait_ms: Option<u64>,
 }
 
-impl From<GeneratePdfOptions> for PrintToPdfParams {
-    fn from(value: GeneratePdfOptions) -> Self {
+impl From<&GeneratePdfOptions> for PrintToPdfParams {
+    fn from(value: &GeneratePdfOptions) -> Self {
         Self {
             landscape: value.landscape,
             display_header_footer: value.display_header_footer,
@@ -90,7 +90,7 @@ impl ChromiumService {
     pub async fn generate_pdf_from_url(
         &self,
         url: &str,
-        options: GeneratePdfOptions,
+        options: &GeneratePdfOptions,
     ) -> anyhow::Result<Vec<u8>> {
         let browser_context_id = self
             .browser

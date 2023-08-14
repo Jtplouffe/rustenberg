@@ -98,30 +98,22 @@ async fn convert_url(
     TypedMultipart(dto): TypedMultipart<ConvertUrlDto>,
 ) -> impl IntoResponse {
     if let Err(err) = dto.validate() {
-        return Json(json!({
-            "error": err.to_string()
-        }))
-        .into_response();
+        return Json(json!({ "error": err.to_string() })).into_response();
     }
 
-    let pdf_bytes = chromium_service
-        .generate_pdf_from_url(&dto.url, dto.to_generate_pdf_options())
-        .await
-        .unwrap();
+    let pdf_bytes_result = chromium_service
+        .generate_pdf_from_url(&dto.url, &dto.to_generate_pdf_options())
+        .await;
 
-    let headers = [(header::CONTENT_TYPE, "application/pdf")];
-
-    (headers, pdf_bytes).into_response()
+    match pdf_bytes_result {
+        Ok(pdf_bytes) => {
+            let headers = [(header::CONTENT_TYPE, "application/pdf")];
+            (headers, pdf_bytes).into_response()
+        }
+        Err(err) => Json(json!({ "error": err.to_string() })).into_response(),
+    }
 }
 
 async fn convert_html() -> Html<&'static str> {
     Html("<h1>TODO: Convert html</h1>")
 }
-
-/*
- *
- * FormData extractor:
- * - Transform the multipart form into serde json
- * - Pass the json to serde, so that it can deserialize it into the desired struct
- *
- */
