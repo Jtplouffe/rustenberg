@@ -11,7 +11,7 @@ use chromiumoxide::{
 use futures::StreamExt;
 use tokio::task::JoinHandle;
 
-use crate::utils::chromium_page::wait_until_page_fully_loaded_with_bounds;
+use crate::utils::chromium_pages::wait_until_page_fully_loaded_with_bounds;
 
 const DEFAULT_MIN_PAGE_LOAD_WAIT_MS: u64 = 0;
 const DEFAULT_MAX_PAGE_LOAD_WAIT_MS: u64 = 5000;
