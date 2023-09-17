@@ -33,6 +33,6 @@ USER rustenberg
 
 WORKDIR /home/rustenberg
 
-EXPOSE 8080
+EXPOSE 3000
 ENTRYPOINT ["/usr/bin/tini"]
 CMD ["./rustenberg"]

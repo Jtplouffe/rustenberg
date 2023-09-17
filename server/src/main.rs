@@ -13,7 +13,7 @@ async fn main() -> anyhow::Result<()> {
     let mut router = endpoints::router().layer(tower_http::trace::TraceLayer::new_for_http());
     router = services::register_into_router(router).await?;
 
-    Server::bind(&"0.0.0.0:8080".parse()?)
+    Server::bind(&"0.0.0.0:3000".parse()?)
         .serve(router.into_make_service())
         .await?;
 

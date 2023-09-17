@@ -98,7 +98,7 @@ impl ChromiumService {
             .await?;
 
         let new_page_params = CreateTargetParams::builder()
-            .url(url)
+            .url("about:blank")
             .browser_context_id(browser_context_id.clone())
             .build()
             .map_err(|err| anyhow!(err))?;
