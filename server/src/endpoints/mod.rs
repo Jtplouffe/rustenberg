@@ -1,7 +1,7 @@
-mod convert;
+mod conversion;
 
 use axum::Router;
 
 pub(crate) fn router() -> Router {
-    Router::new().nest("/convert", convert::router())
+    Router::new().nest("/conversion", conversion::router())
 }

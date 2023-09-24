@@ -28,6 +28,10 @@ pub struct GeneratePdfOptions {
     pub margin_bottom: Option<f64>,
     pub margin_left: Option<f64>,
     pub margin_right: Option<f64>,
+    pub page_range: Option<String>,
+    pub header_template: Option<String>,
+    pub footer_template: Option<String>,
+    pub prefer_css_page_size: Option<bool>,
 
     pub min_page_load_wait_ms: Option<u64>,
     pub max_page_load_wait_ms: Option<u64>,
@@ -46,10 +50,10 @@ impl From<&GeneratePdfOptions> for PrintToPdfParams {
             margin_bottom: value.margin_bottom,
             margin_left: value.margin_left,
             margin_right: value.margin_right,
-            page_ranges: None,
-            header_template: None,
-            footer_template: None,
-            prefer_css_page_size: None,
+            page_ranges: value.page_range.clone(),
+            header_template: value.header_template.clone(),
+            footer_template: value.footer_template.clone(),
+            prefer_css_page_size: value.prefer_css_page_size,
             transfer_mode: None,
         }
     }

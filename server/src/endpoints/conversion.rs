@@ -37,10 +37,14 @@ struct ConvertUrlDto {
     margin_left: Option<f64>,
     #[validate(range(min = 0))]
     margin_right: Option<f64>,
+    page_range: Option<String>,
+    header_template: Option<String>,
+    footer_template: Option<String>,
+    prefer_css_page_size: Option<bool>,
 
-    #[validate(range(max = 10000))]
+    #[validate(range(min = 0, max = 10000))]
     min_page_load_wait_ms: Option<u64>,
-    #[validate(range(max = 10000))]
+    #[validate(range(min = 0, max = 10000))]
     max_page_load_wait_ms: Option<u64>,
 
     #[validate(length(min = 1, max = 42))]
@@ -86,6 +90,10 @@ impl ConvertUrlDto {
             margin_bottom: self.margin_bottom,
             margin_left: self.margin_left,
             margin_right: self.margin_right,
+            page_range: self.page_range.clone(),
+            header_template: self.header_template.clone(),
+            footer_template: self.footer_template.clone(),
+            prefer_css_page_size: self.prefer_css_page_size,
             min_page_load_wait_ms: self.min_page_load_wait_ms,
             max_page_load_wait_ms: self.max_page_load_wait_ms,
         }
@@ -135,10 +143,14 @@ struct ConvertHtmlDto {
     margin_left: Option<f64>,
     #[validate(range(min = 0))]
     margin_right: Option<f64>,
+    page_range: Option<String>,
+    header_template: Option<String>,
+    footer_template: Option<String>,
+    prefer_css_page_size: Option<bool>,
 
-    #[validate(range(max = 10000))]
+    #[validate(range(min = 0, max = 10000))]
     min_page_load_wait_ms: Option<u64>,
-    #[validate(range(max = 10000))]
+    #[validate(range(min = 0, max = 10000))]
     max_page_load_wait_ms: Option<u64>,
 
     #[validate(length(min = 1, max = 42))]
@@ -184,6 +196,10 @@ impl ConvertHtmlDto {
             margin_bottom: self.margin_bottom,
             margin_left: self.margin_left,
             margin_right: self.margin_right,
+            page_range: self.page_range.clone(),
+            header_template: self.header_template.clone(),
+            footer_template: self.footer_template.clone(),
+            prefer_css_page_size: self.prefer_css_page_size,
             min_page_load_wait_ms: self.min_page_load_wait_ms,
             max_page_load_wait_ms: self.max_page_load_wait_ms,
         }
