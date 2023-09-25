@@ -1,4 +1,5 @@
 pub mod chromium;
+pub mod manipulation;
 
 use std::sync::Arc;
 

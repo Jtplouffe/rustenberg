@@ -19,7 +19,7 @@ async fn init_temp_dir_location() -> anyhow::Result<PathBuf> {
     Ok(temp_dir)
 }
 
-pub(crate) async fn group_temp_file_fields(
+pub async fn group_temp_file_fields(
     file_fields: Vec<FieldData<NamedTempFile>>,
 ) -> anyhow::Result<TempDir> {
     let temp_dir = get_temp_dir_location().await?;
@@ -30,6 +30,7 @@ pub(crate) async fn group_temp_file_fields(
             Some(filename) => filename,
             None => return Err(anyhow!("file must have a filename")),
         };
+        println!("{filename}");
 
         let path = dir.path().join(filename);
         tokio::fs::copy(file_field.contents.path(), path).await?;

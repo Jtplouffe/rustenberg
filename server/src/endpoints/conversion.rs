@@ -9,7 +9,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use crate::services::chromium::{ChromiumService, GeneratePdfOptions};
 use crate::utils::temp_files::group_temp_file_fields;
 
-pub(crate) fn router() -> Router {
+pub fn router() -> Router {
     Router::new()
         .route("/url", post(convert_url))
         .route("/html", post(convert_html))

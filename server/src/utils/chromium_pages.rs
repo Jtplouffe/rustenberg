@@ -9,7 +9,7 @@ use chromiumoxide::{
 };
 use futures::{try_join, FutureExt, StreamExt};
 
-pub(crate) async fn wait_until_page_fully_loaded_with_bounds(
+pub async fn wait_until_page_fully_loaded_with_bounds(
     page: Page,
     min_wait_duration: Duration,
     max_wait_duration: Duration,
@@ -22,7 +22,7 @@ pub(crate) async fn wait_until_page_fully_loaded_with_bounds(
     Ok(())
 }
 
-pub(crate) async fn wait_until_page_fully_loaded(page: Page) -> anyhow::Result<()> {
+pub async fn wait_until_page_fully_loaded(page: Page) -> anyhow::Result<()> {
     try_join!(
         wait_for_network_idle_event(&page),
         wait_for_dom_content_event(&page),
