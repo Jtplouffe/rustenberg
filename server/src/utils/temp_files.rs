@@ -30,11 +30,28 @@ pub async fn group_temp_file_fields(
             Some(filename) => filename,
             None => return Err(anyhow!("file must have a filename")),
         };
-        println!("{filename}");
 
         let path = dir.path().join(filename);
         tokio::fs::copy(file_field.contents.path(), path).await?;
     }
 
     Ok(dir)
+}
+
+pub async fn load_temp_file_fields_sorted(
+    file_fields: Vec<FieldData<NamedTempFile>>,
+) -> anyhow::Result<Vec<Vec<u8>>> {
+    let mut raw_files_with_name = Vec::with_capacity(file_fields.len());
+
+    for file_field in file_fields {
+        let filename = file_field.metadata.file_name.unwrap_or_default();
+
+        let bytes = tokio::fs::read(file_field.contents.path()).await?;
+
+        raw_files_with_name.push((filename, bytes));
+    }
+
+    raw_files_with_name.sort_by(|(filename1, _), (filename2, _)| filename1.cmp(filename2));
+    let sorted_raw_files = raw_files_with_name.into_iter().map(|(_, bytes)| bytes).collect();
+    Ok(sorted_raw_files)
 }

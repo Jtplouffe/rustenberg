@@ -164,6 +164,11 @@ impl ConvertHtmlDto {
             _ => ValidationErrors::new(),
         };
 
+        if self.files.is_empty() {
+            let error = ValidationError::new("files must not be empty");
+            errors.add("files", error);
+        }
+
         match (self.min_page_load_wait_ms, self.max_page_load_wait_ms) {
             (Some(min_page_load_wait_ms), Some(max_page_load_wait_ms))
                 if max_page_load_wait_ms < min_page_load_wait_ms =>
