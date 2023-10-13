@@ -24,3 +24,7 @@ More features will be implemented in the future.
 ## Clients
 
 Multiple clients will be implemented over time. They will be located in the [clients directory](./clients).
+
+## License
+
+This project is currently licensed under AGPL-3. This will likely change once the project is ready for general use.
