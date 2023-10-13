@@ -31,6 +31,7 @@ Although every request gets it's own unique browser context, these endpoints sho
 client, with trusted urls / files only.
 
 Untrusted users should never be able to manipulate the content being loaded in the browser.
+This microservice should therefore not be publicly accessible.
 
 ## Routes
 

@@ -69,9 +69,6 @@ impl ChromiumService {
         let (browser, mut handler) = Browser::launch(
             BrowserConfig::builder()
                 .no_sandbox()
-                .chrome_executable(
-                    "/var/lib/flatpak/exports/bin/com.github.Eloston.UngoogledChromium",
-                )
                 .build()
                 .map_err(|err| anyhow!(err))?,
         )
