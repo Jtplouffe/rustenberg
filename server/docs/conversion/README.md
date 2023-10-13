@@ -25,6 +25,15 @@ There is also a couple of options which are not part of the CDP `printToPDF` fun
 In addition to the `minPageLoadWaitMs` / `maxPageLoadWaitMs` options, multiple events will be awaited before generating
 the pdf. Those events are: `networkIdle`, `domContentEvent`, `loadEvent`, and `loadingFinished`.
 
+## Security
+
+Although every request gets it's own unique browser context, these endpoints should only be called from a trustedclient
+client, with trusted urls / files only.
+
+Untrusted users should never be able to manipulate the content being loaded in the browser.
+
+## Routes
+
 ### Url
 
 The `POST /conversion/url` endpoint is used to convert a website page into a pdf document.
