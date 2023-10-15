@@ -1,5 +1,7 @@
 # rustenberg
 
+[![Server checks](https://github.com/Jtplouffe/rustenberg/actions/workflows/server.yml/badge.svg)](https://github.com/Jtplouffe/rustenberg/actions/workflows/server.yml)
+
 Inspired by [gotenberg](https://github.com/gotenberg/gotenberg), rustenberg is a microservice that is used to convert
 and manipulate pdf documents.
 
