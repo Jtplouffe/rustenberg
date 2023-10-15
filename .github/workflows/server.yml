@@ -23,4 +23,4 @@ jobs:
       - name: Clippy
         run: cargo clippy
       - name: Build
-        run: docker build .
+        run: cargo build
