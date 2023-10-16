@@ -19,8 +19,8 @@ There is also a couple of options which are not part of the CDP `printToPDF` fun
 
 | Name                | Type     | Description                                          |
 |---------------------|----------|------------------------------------------------------|
-| `minPageLoadWaitMs` | `number` | Minimum amount of time to wait for the page to load. |
-| `maxPageLoadWaitMs` | `number` | Maximum amount of time to wait for the page to load. |
+| `minPageLoadTimeMs` | `number` | Minimum amount of time to wait for the page to load. |
+| `maxPageLoadTimeMs` | `number` | Maximum amount of time to wait for the page to load. |
 
 In addition to the `minPageLoadWaitMs` / `maxPageLoadWaitMs` options, multiple events will be awaited before generating
 the pdf. Those events are: `networkIdle`, `domContentEvent`, `loadEvent`, and `loadingFinished`.

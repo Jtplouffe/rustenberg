@@ -1,0 +1,3 @@
+package rustenberg
+
+type ManipulationService clientService

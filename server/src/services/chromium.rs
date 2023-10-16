@@ -13,8 +13,8 @@ use tokio::task::JoinHandle;
 
 use crate::utils::chromium_pages::wait_until_page_fully_loaded_with_bounds;
 
-const DEFAULT_MIN_PAGE_LOAD_WAIT_MS: u64 = 0;
-const DEFAULT_MAX_PAGE_LOAD_WAIT_MS: u64 = 5000;
+const DEFAULT_MIN_PAGE_LOAD_TIME_MS: u64 = 0;
+const DEFAULT_MAX_PAGE_LOAD_TIME_MS: u64 = 5000;
 
 #[derive(Default)]
 pub struct GeneratePdfOptions {
@@ -33,8 +33,8 @@ pub struct GeneratePdfOptions {
     pub footer_template: Option<String>,
     pub prefer_css_page_size: Option<bool>,
 
-    pub min_page_load_wait_ms: Option<u64>,
-    pub max_page_load_wait_ms: Option<u64>,
+    pub min_page_load_time_ms: Option<u64>,
+    pub max_page_load_time_ms: Option<u64>,
 }
 
 impl From<&GeneratePdfOptions> for PrintToPdfParams {
@@ -114,22 +114,22 @@ impl ChromiumService {
             }
         };
 
-        let page_wait_handle = tokio::spawn(wait_until_page_fully_loaded_with_bounds(
+        let page_load_handle = tokio::spawn(wait_until_page_fully_loaded_with_bounds(
             page.clone(),
             Duration::from_millis(
                 options
-                    .min_page_load_wait_ms
-                    .unwrap_or(DEFAULT_MIN_PAGE_LOAD_WAIT_MS),
+                    .min_page_load_time_ms
+                    .unwrap_or(DEFAULT_MIN_PAGE_LOAD_TIME_MS),
             ),
             Duration::from_millis(
                 options
-                    .max_page_load_wait_ms
-                    .unwrap_or(DEFAULT_MAX_PAGE_LOAD_WAIT_MS),
+                    .max_page_load_time_ms
+                    .unwrap_or(DEFAULT_MAX_PAGE_LOAD_TIME_MS),
             ),
         ));
 
         if let Err(err) = page.goto(url).await {
-            page_wait_handle.abort();
+            page_load_handle.abort();
 
             self.browser
                 .dispose_browser_context(browser_context_id)
@@ -138,7 +138,7 @@ impl ChromiumService {
             return Err(anyhow!(err));
         }
 
-        page_wait_handle.await??;
+        page_load_handle.await??;
 
         // Improvements: the bytes can be streamed instead of having to await them all here.
         // By streaming them, maybe we could stream directly to the client.

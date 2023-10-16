@@ -43,12 +43,9 @@ struct ConvertUrlDto {
     prefer_css_page_size: Option<bool>,
 
     #[validate(range(min = 0, max = 10000))]
-    min_page_load_wait_ms: Option<u64>,
+    min_page_load_time_ms: Option<u64>,
     #[validate(range(min = 0, max = 10000))]
-    max_page_load_wait_ms: Option<u64>,
-
-    #[validate(length(min = 1, max = 42))]
-    output_filename: Option<String>,
+    max_page_load_time_ms: Option<u64>,
 }
 
 impl ConvertUrlDto {
@@ -58,15 +55,15 @@ impl ConvertUrlDto {
             _ => ValidationErrors::new(),
         };
 
-        match (self.min_page_load_wait_ms, self.max_page_load_wait_ms) {
-            (Some(min_page_load_wait_ms), Some(max_page_load_wait_ms))
-                if max_page_load_wait_ms < min_page_load_wait_ms =>
+        match (self.min_page_load_time_ms, self.max_page_load_time_ms) {
+            (Some(min_page_load_time_ms), Some(max_page_load_time_ms))
+                if max_page_load_time_ms < min_page_load_time_ms =>
             {
                 let error = ValidationError::new(
-                    "min_page_load_wait_min must be less than max_page_load_wait_ms",
+                    "min_page_load_time_min must be less than max_page_load_time_ms",
                 );
 
-                errors.add("min_page_load_wait_ms", error);
+                errors.add("min_page_load_time_ms", error);
             }
             _ => {}
         };
@@ -94,8 +91,8 @@ impl ConvertUrlDto {
             header_template: self.header_template.clone(),
             footer_template: self.footer_template.clone(),
             prefer_css_page_size: self.prefer_css_page_size,
-            min_page_load_wait_ms: self.min_page_load_wait_ms,
-            max_page_load_wait_ms: self.max_page_load_wait_ms,
+            min_page_load_time_ms: self.min_page_load_time_ms,
+            max_page_load_time_ms: self.max_page_load_time_ms,
         }
     }
 }
@@ -149,12 +146,9 @@ struct ConvertHtmlDto {
     prefer_css_page_size: Option<bool>,
 
     #[validate(range(min = 0, max = 10000))]
-    min_page_load_wait_ms: Option<u64>,
+    min_page_load_time_ms: Option<u64>,
     #[validate(range(min = 0, max = 10000))]
-    max_page_load_wait_ms: Option<u64>,
-
-    #[validate(length(min = 1, max = 42))]
-    output_filename: Option<String>,
+    max_page_load_time_ms: Option<u64>,
 }
 
 impl ConvertHtmlDto {
@@ -169,15 +163,15 @@ impl ConvertHtmlDto {
             errors.add("files", error);
         }
 
-        match (self.min_page_load_wait_ms, self.max_page_load_wait_ms) {
-            (Some(min_page_load_wait_ms), Some(max_page_load_wait_ms))
-                if max_page_load_wait_ms < min_page_load_wait_ms =>
+        match (self.min_page_load_time_ms, self.max_page_load_time_ms) {
+            (Some(min_page_load_time_ms), Some(max_page_load_time_ms))
+                if max_page_load_time_ms < min_page_load_time_ms =>
             {
                 let error = ValidationError::new(
-                    "min_page_load_wait_min must be less than max_page_load_wait_ms",
+                    "min_page_load_time_min must be less than max_page_load_time_ms",
                 );
 
-                errors.add("min_page_load_wait_ms", error);
+                errors.add("min_page_load_time_ms", error);
             }
             _ => {}
         };
@@ -205,8 +199,8 @@ impl ConvertHtmlDto {
             header_template: self.header_template.clone(),
             footer_template: self.footer_template.clone(),
             prefer_css_page_size: self.prefer_css_page_size,
-            min_page_load_wait_ms: self.min_page_load_wait_ms,
-            max_page_load_wait_ms: self.max_page_load_wait_ms,
+            min_page_load_time_ms: self.min_page_load_time_ms,
+            max_page_load_time_ms: self.max_page_load_time_ms,
         }
     }
 }
