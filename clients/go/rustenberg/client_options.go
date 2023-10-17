@@ -12,8 +12,6 @@ func (options *ClientOptions) validate() error {
 		return errors.New("missing ServiceUrl")
 	}
 
-	options.DeferredErrorHandler = nil
-
 	return nil
 }
 

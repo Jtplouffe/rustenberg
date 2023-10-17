@@ -47,6 +47,6 @@ func (client *Client) newRequest(method, path string) (*http.Request, error) {
 		return nil, err
 	}
 
-	request.Header.Set("User-Agent", "rustenberg-lgo")
+	request.Header.Set("User-Agent", "rustenberg-go")
 	return request, nil
 }
