@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use axum::http::StatusCode;
 use axum::{http::header, response::IntoResponse, routing::post, Extension, Json, Router};
 use axum_typed_multipart::{FieldData, TryFromMultipart, TypedMultipart};
 use serde_json::json;
@@ -102,7 +103,11 @@ async fn convert_url(
     TypedMultipart(dto): TypedMultipart<ConvertUrlDto>,
 ) -> impl IntoResponse {
     if let Err(err) = dto.validate() {
-        return Json(json!({ "error": err.to_string() })).into_response();
+        return (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response();
     }
 
     let pdf_bytes_result = chromium_service
@@ -114,7 +119,11 @@ async fn convert_url(
             let headers = [(header::CONTENT_TYPE, "application/pdf")];
             (headers, pdf_bytes).into_response()
         }
-        Err(err) => Json(json!({ "error": err.to_string() })).into_response(),
+        Err(err) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response(),
     }
 }
 
@@ -210,7 +219,11 @@ async fn convert_html(
     TypedMultipart(dto): TypedMultipart<ConvertHtmlDto>,
 ) -> impl IntoResponse {
     if let Err(err) = dto.validate() {
-        return Json(json!({ "error": err.to_string() })).into_response();
+        return (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response();
     }
 
     let options = dto.to_generate_pdf_options();
@@ -222,7 +235,13 @@ async fn convert_html(
 
     let dir_path = match dir.path().to_str() {
         Some(path) => format!("file://{path}/index.html"),
-        None => return Json(json!({ "error": "could not get directory path" })).into_response(),
+        None => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({ "error": "could not get directory path" })),
+            )
+                .into_response()
+        }
     };
 
     let pdf_bytes_result = chromium_service
@@ -234,6 +253,10 @@ async fn convert_html(
             let headers = [(header::CONTENT_TYPE, "application/pdf")];
             (headers, pdf_bytes).into_response()
         }
-        Err(err) => Json(json!({ "error": err.to_string() })).into_response(),
+        Err(err) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response(),
     }
 }

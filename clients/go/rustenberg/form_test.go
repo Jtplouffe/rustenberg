@@ -9,7 +9,7 @@ import (
 )
 
 func TestWriteToMultipartForm(t *testing.T) {
-	data := struct {
+	data := &struct {
 		One   string  `form:"one"`
 		Two   bool    `form:"Two"`
 		Three float64 `form:"FIELD_THREE"`
@@ -21,7 +21,7 @@ func TestWriteToMultipartForm(t *testing.T) {
 
 	b := bytes.Buffer{}
 	formWriter := multipart.NewWriter(&b)
-	if err := writeToMultipartForm(formWriter, data); err != nil {
+	if err := writeDataToMultipartForm(formWriter, data); err != nil {
 		t.Fatal(err)
 	}
 
@@ -71,7 +71,7 @@ func TestWriteToMultipartForm(t *testing.T) {
 }
 
 func TestWriteToMultipartFormOmitEmpty(t *testing.T) {
-	data := struct {
+	data := &struct {
 		One   string  `form:"one"`
 		Two   string  `form:"two,omitempty"`
 		Three bool    `form:"three,omitempty"`
@@ -83,7 +83,7 @@ func TestWriteToMultipartFormOmitEmpty(t *testing.T) {
 
 	b := bytes.Buffer{}
 	formWriter := multipart.NewWriter(&b)
-	if err := writeToMultipartForm(formWriter, data); err != nil {
+	if err := writeDataToMultipartForm(formWriter, data); err != nil {
 		t.Fatal(err)
 	}
 

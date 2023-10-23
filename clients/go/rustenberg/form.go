@@ -9,9 +9,14 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func writeToMultipartForm(formWriter *multipart.Writer, data interface{}) error {
+func writeDataToMultipartForm(formWriter *multipart.Writer, data interface{}) error {
 	t := reflect.TypeOf(data)
 	v := reflect.ValueOf(data)
+
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+		v = v.Elem()
+	}
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -39,6 +44,31 @@ func writeToMultipartForm(formWriter *multipart.Writer, data interface{}) error 
 		}
 
 		if err := formWriter.WriteField(fieldname, fmt.Sprintf("%v", value)); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func writeFilesToMultipartForm(formWriter *multipart.Writer, fieldname string, files []File) error {
+	for _, file := range files {
+		filename, err := file.name()
+		if err != nil {
+			return err
+		}
+
+		fileContent, err := file.content()
+		if err != nil {
+			return err
+		}
+
+		fileWriter, err := formWriter.CreateFormFile(fieldname, filename)
+		if err != nil {
+			return err
+		}
+
+		if _, err := fileWriter.Write(fileContent); err != nil {
 			return err
 		}
 	}
