@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use axum::http::StatusCode;
 use axum::{http::header, response::IntoResponse, routing::post, Extension, Json, Router};
 use axum_typed_multipart::{FieldData, TryFromMultipart, TypedMultipart};
 use serde_json::json;
@@ -43,12 +44,9 @@ struct ConvertUrlDto {
     prefer_css_page_size: Option<bool>,
 
     #[validate(range(min = 0, max = 10000))]
-    min_page_load_wait_ms: Option<u64>,
+    min_page_load_time_ms: Option<u64>,
     #[validate(range(min = 0, max = 10000))]
-    max_page_load_wait_ms: Option<u64>,
-
-    #[validate(length(min = 1, max = 42))]
-    output_filename: Option<String>,
+    max_page_load_time_ms: Option<u64>,
 }
 
 impl ConvertUrlDto {
@@ -58,15 +56,15 @@ impl ConvertUrlDto {
             _ => ValidationErrors::new(),
         };
 
-        match (self.min_page_load_wait_ms, self.max_page_load_wait_ms) {
-            (Some(min_page_load_wait_ms), Some(max_page_load_wait_ms))
-                if max_page_load_wait_ms < min_page_load_wait_ms =>
+        match (self.min_page_load_time_ms, self.max_page_load_time_ms) {
+            (Some(min_page_load_time_ms), Some(max_page_load_time_ms))
+                if max_page_load_time_ms < min_page_load_time_ms =>
             {
                 let error = ValidationError::new(
-                    "min_page_load_wait_min must be less than max_page_load_wait_ms",
+                    "min_page_load_time_min must be less than max_page_load_time_ms",
                 );
 
-                errors.add("min_page_load_wait_ms", error);
+                errors.add("min_page_load_time_ms", error);
             }
             _ => {}
         };
@@ -94,8 +92,8 @@ impl ConvertUrlDto {
             header_template: self.header_template.clone(),
             footer_template: self.footer_template.clone(),
             prefer_css_page_size: self.prefer_css_page_size,
-            min_page_load_wait_ms: self.min_page_load_wait_ms,
-            max_page_load_wait_ms: self.max_page_load_wait_ms,
+            min_page_load_time_ms: self.min_page_load_time_ms,
+            max_page_load_time_ms: self.max_page_load_time_ms,
         }
     }
 }
@@ -105,7 +103,11 @@ async fn convert_url(
     TypedMultipart(dto): TypedMultipart<ConvertUrlDto>,
 ) -> impl IntoResponse {
     if let Err(err) = dto.validate() {
-        return Json(json!({ "error": err.to_string() })).into_response();
+        return (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response();
     }
 
     let pdf_bytes_result = chromium_service
@@ -117,7 +119,11 @@ async fn convert_url(
             let headers = [(header::CONTENT_TYPE, "application/pdf")];
             (headers, pdf_bytes).into_response()
         }
-        Err(err) => Json(json!({ "error": err.to_string() })).into_response(),
+        Err(err) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response(),
     }
 }
 
@@ -149,12 +155,9 @@ struct ConvertHtmlDto {
     prefer_css_page_size: Option<bool>,
 
     #[validate(range(min = 0, max = 10000))]
-    min_page_load_wait_ms: Option<u64>,
+    min_page_load_time_ms: Option<u64>,
     #[validate(range(min = 0, max = 10000))]
-    max_page_load_wait_ms: Option<u64>,
-
-    #[validate(length(min = 1, max = 42))]
-    output_filename: Option<String>,
+    max_page_load_time_ms: Option<u64>,
 }
 
 impl ConvertHtmlDto {
@@ -169,15 +172,15 @@ impl ConvertHtmlDto {
             errors.add("files", error);
         }
 
-        match (self.min_page_load_wait_ms, self.max_page_load_wait_ms) {
-            (Some(min_page_load_wait_ms), Some(max_page_load_wait_ms))
-                if max_page_load_wait_ms < min_page_load_wait_ms =>
+        match (self.min_page_load_time_ms, self.max_page_load_time_ms) {
+            (Some(min_page_load_time_ms), Some(max_page_load_time_ms))
+                if max_page_load_time_ms < min_page_load_time_ms =>
             {
                 let error = ValidationError::new(
-                    "min_page_load_wait_min must be less than max_page_load_wait_ms",
+                    "min_page_load_time_min must be less than max_page_load_time_ms",
                 );
 
-                errors.add("min_page_load_wait_ms", error);
+                errors.add("min_page_load_time_ms", error);
             }
             _ => {}
         };
@@ -205,8 +208,8 @@ impl ConvertHtmlDto {
             header_template: self.header_template.clone(),
             footer_template: self.footer_template.clone(),
             prefer_css_page_size: self.prefer_css_page_size,
-            min_page_load_wait_ms: self.min_page_load_wait_ms,
-            max_page_load_wait_ms: self.max_page_load_wait_ms,
+            min_page_load_time_ms: self.min_page_load_time_ms,
+            max_page_load_time_ms: self.max_page_load_time_ms,
         }
     }
 }
@@ -216,7 +219,11 @@ async fn convert_html(
     TypedMultipart(dto): TypedMultipart<ConvertHtmlDto>,
 ) -> impl IntoResponse {
     if let Err(err) = dto.validate() {
-        return Json(json!({ "error": err.to_string() })).into_response();
+        return (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response();
     }
 
     let options = dto.to_generate_pdf_options();
@@ -228,7 +235,13 @@ async fn convert_html(
 
     let dir_path = match dir.path().to_str() {
         Some(path) => format!("file://{path}/index.html"),
-        None => return Json(json!({ "error": "could not get directory path" })).into_response(),
+        None => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({ "error": "could not get directory path" })),
+            )
+                .into_response()
+        }
     };
 
     let pdf_bytes_result = chromium_service
@@ -240,6 +253,10 @@ async fn convert_html(
             let headers = [(header::CONTENT_TYPE, "application/pdf")];
             (headers, pdf_bytes).into_response()
         }
-        Err(err) => Json(json!({ "error": err.to_string() })).into_response(),
+        Err(err) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": err.to_string() })),
+        )
+            .into_response(),
     }
 }
