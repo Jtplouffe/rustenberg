@@ -1,5 +1,5 @@
 import { File } from "./file.js";
 
-export interface MergeDto {
+export type MergeDto = {
     documents: (File & { mediaType?: "application/pdf" })[];
-}
+};

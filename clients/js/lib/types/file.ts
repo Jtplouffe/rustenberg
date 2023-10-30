@@ -1,5 +1,5 @@
-export interface File {
+export type File = {
     buffer: Buffer;
     filename: string;
     mediaType?: string;
-}
+};

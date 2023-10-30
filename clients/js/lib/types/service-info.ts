@@ -1,3 +1,3 @@
-export interface ServiceInfo {
+export type ServiceInfo = {
     version: string;
-}
+};
