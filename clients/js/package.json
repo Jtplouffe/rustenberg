@@ -1,0 +1,21 @@
+{
+    "name": "rustenberg-js",
+    "version": "0.0.1",
+    "description": "",
+    "exports": "index.js",
+    "type": "module",
+    "scripts": {
+        "check": "npx @biomejs/biome check ./lib/ --apply"
+    },
+    "author": "Jtplouffe",
+    "license": "AGPL-3.0",
+    "dependencies": {
+        "form-data": "^4.0.0",
+        "got": "^13.0.0"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.3.1",
+        "@types/node": "^20.8.9",
+        "typescript": "^5.2.2"
+    }
+}

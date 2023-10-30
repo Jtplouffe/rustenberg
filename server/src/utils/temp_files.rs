@@ -52,6 +52,9 @@ pub async fn load_temp_file_fields_sorted(
     }
 
     raw_files_with_name.sort_by(|(filename1, _), (filename2, _)| filename1.cmp(filename2));
-    let sorted_raw_files = raw_files_with_name.into_iter().map(|(_, bytes)| bytes).collect();
+    let sorted_raw_files = raw_files_with_name
+        .into_iter()
+        .map(|(_, bytes)| bytes)
+        .collect();
     Ok(sorted_raw_files)
 }
