@@ -4,13 +4,15 @@ on:
   push:
     branches:
       - main
+    paths:
+      - ./server/
 
 jobs:
   server-checks:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./server
+        working-directory: ./server/
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rs/toolchain@v1
