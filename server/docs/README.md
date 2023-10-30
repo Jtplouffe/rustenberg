@@ -1,4 +1,4 @@
-# Docs
+# Server docs
 
 <!--toc:start-->
 - [Docs](#docs)
