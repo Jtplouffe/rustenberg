@@ -17,6 +17,7 @@ pub fn router() -> Router {
 
 #[derive(TryFromMultipart, Validate)]
 struct MergeDto {
+    #[form_data(limit = "5MiB")]
     documents: Vec<FieldData<NamedTempFile>>,
 }
 
