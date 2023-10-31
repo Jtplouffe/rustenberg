@@ -22,7 +22,7 @@ func (client *Client) GetServiceInfo() (*ServiceInfo, error) {
 
 	defer func() {
 		if err := response.Body.Close(); err != nil {
-			client.options.handleDeferedError(err)
+			client.options.handleDeferredError(err)
 		}
 	}()
 

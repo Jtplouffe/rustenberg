@@ -30,11 +30,19 @@ func NewClient(options ClientOptions) (*Client, error) {
 
 func (client *Client) url(path string) string {
 	url := client.options.ServiceUrl
+	if url[len(url)-1] == '/' {
+		url = url[:len(url)-1]
+	}
+
 	if len(path) > 0 {
-		if (url[len(url)-1] == '/') != (path[0] == '/') {
+		if path[0] == '/' {
 			url += path
 		} else {
-			url += path[1:]
+			url += "/" + path
+		}
+
+		if path[len(path)-1] == '/' {
+			url = url[:len(url)-1]
 		}
 	}
 

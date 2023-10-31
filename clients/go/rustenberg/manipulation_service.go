@@ -40,7 +40,7 @@ func (service *ManipulationService) Merge(dto *MergeDto) ([]byte, error) {
 
 	defer func() {
 		if err := response.Body.Close(); err != nil {
-			service.client.options.handleDeferedError(err)
+			service.client.options.handleDeferredError(err)
 		}
 	}()
 

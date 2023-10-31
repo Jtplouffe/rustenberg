@@ -57,7 +57,7 @@ func (service *ConversionService) ConvertUrl(dto *ConvertUrlDto) ([]byte, error)
 
 	defer func() {
 		if err := response.Body.Close(); err != nil {
-			service.client.options.handleDeferedError(err)
+			service.client.options.handleDeferredError(err)
 		}
 	}()
 
@@ -120,7 +120,7 @@ func (service *ConversionService) ConvertHtml(dto *ConvertHtmlDto) ([]byte, erro
 
 	defer func() {
 		if err := response.Body.Close(); err != nil {
-			service.client.options.handleDeferedError(err)
+			service.client.options.handleDeferredError(err)
 		}
 	}()
 
