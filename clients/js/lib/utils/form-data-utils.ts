@@ -17,7 +17,6 @@ export function formDataFromObject<T extends Record<string, unknown>>(
         }
 
         formData.append(key, value);
-        formData.append;
     }
 
     return formData;
